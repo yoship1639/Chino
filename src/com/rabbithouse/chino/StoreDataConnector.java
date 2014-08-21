@@ -9,8 +9,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 /**
  * iBeaconを設置するお店とユーザの、店舗データのやり取りをまとめたコネクタ
@@ -35,12 +38,23 @@ public class StoreDataConnector {
 		
 		// JSONデータを受け取る
 		JSONObject jsonRoot = getJsonObjectByHTTPRequest(uri.toString());
+		
+		Log.e("json", jsonRoot.toString(0));
+		
+		JSONObject obj = jsonRoot.getJSONArray("data").getJSONObject(0);
+		//JSONObject obj = jsonRoot.getJSONObject("data");
+		
+		StoreInfo info = new StoreInfo();
+		info.Name = obj.getString("name");
+		info.Category = obj.getInt("categoryID") + "";
+		info.SalesText = obj.getString("salesText");
+		info.UUID = UUID;
 		*/
 		
 		StoreInfo info = new StoreInfo();
-		info.Name = "藤嶋書店";
-		info.Category = "本屋";
-		info.SalesText = "今ならなんと、すべての本が10割引!!!";
+		info.Name = "ぇぅ書店";
+		info.Category = "エロ本";
+		info.SalesText = "ぐへへ";
 		info.UUID = UUID;
 		
 		return info;

@@ -8,8 +8,10 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -48,6 +50,46 @@ public class BeaconSearchService extends Service
 		
 		// ステータス通知を利用する準備
 		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		
+		// Bluetoothの状態が変わるのを検知
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+		
+		// ブロードキャストを受け取るレシーバを登録
+		BluetoothBroadcastReceiver bbr = new BluetoothBroadcastReceiver(this);
+		registerReceiver(bbr, intentFilter);
+
+	}
+	
+	private class BluetoothBroadcastReceiver extends BroadcastReceiver
+	{
+		BeaconSearchService bss;
+
+		public BluetoothBroadcastReceiver(BeaconSearchService bss)
+		{
+			this.bss = bss;
+		}
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			 if (intent.getAction().equals(BluetoothAdapter.ACTION_STATE_CHANGED))
+			 {
+				 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+				 
+				 switch(state)
+				 {
+				 case BluetoothAdapter.STATE_ON:			// BluetoothがONに変わったとき
+					 // iBeaconのスキャンを開始
+					 bss._bluetoothAdapter.startLeScan(mLeScanCallback);
+					 break;
+					 
+				 case BluetoothAdapter.STATE_TURNING_OFF:	// BluetoothがOFFに変わるとき
+					 // iBeaconのスキャンを停止
+					 bss._bluetoothAdapter.stopLeScan(mLeScanCallback);
+					 break;
+				 }
+			 }
+		}
+		
 	}
 	
 	/**
@@ -111,6 +153,8 @@ public class BeaconSearchService extends Service
 	    	}
 	    }
 	};
+	
+	
 	
 	/**
 	 * 指定のUUIDを持つUuidDataを検索する
