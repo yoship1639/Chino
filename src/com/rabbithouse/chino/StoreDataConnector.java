@@ -31,7 +31,7 @@ public class StoreDataConnector {
 	 */
 	public static StoreInfo getStoreInfo(String UUID) throws ClientProtocolException, IOException, JSONException
 	{
-		/*
+		
 		// UUIDÇURIÇ…ñÑÇﬂçûÇﬁ
 		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/findStoreInfo/");
 		uri.append(UUID);
@@ -49,13 +49,15 @@ public class StoreDataConnector {
 		info.Category = obj.getInt("categoryID") + "";
 		info.SalesText = obj.getString("salesText");
 		info.UUID = UUID;
-		*/
 		
+		
+		/*
 		StoreInfo info = new StoreInfo();
 		info.Name = "Ç•Ç£èëìX";
 		info.Category = "ÉGÉçñ{";
 		info.SalesText = "ÇÆÇ÷Ç÷";
 		info.UUID = UUID;
+		*/
 		
 		return info;
 	}

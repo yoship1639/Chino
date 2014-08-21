@@ -36,6 +36,9 @@ public class BeaconSearchService extends Service
 	// Notificationマネージャ
 	private NotificationManager notificationManager = null;
 	
+	// ブロードキャストレシーバ
+	private BluetoothBroadcastReceiver bluetoothBR = null;
+	
 	public BeaconSearchService()
 	{
 	}
@@ -56,9 +59,8 @@ public class BeaconSearchService extends Service
 		intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 		
 		// ブロードキャストを受け取るレシーバを登録
-		BluetoothBroadcastReceiver bbr = new BluetoothBroadcastReceiver(this);
-		registerReceiver(bbr, intentFilter);
-
+		bluetoothBR = new BluetoothBroadcastReceiver(this);
+		registerReceiver(bluetoothBR, intentFilter);
 	}
 	
 	private class BluetoothBroadcastReceiver extends BroadcastReceiver
@@ -317,6 +319,9 @@ public class BeaconSearchService extends Service
 	
 	@Override
 	public void onDestroy() {
+		
+		// ブロードキャストレシーバの登録を削除
+		unregisterReceiver(bluetoothBR);
 		
 		// BlurtoothLEの検知をストップする
 		_bluetoothAdapter.stopLeScan(mLeScanCallback);
