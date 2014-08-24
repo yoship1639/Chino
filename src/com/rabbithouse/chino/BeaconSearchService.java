@@ -1,9 +1,15 @@
 package com.rabbithouse.chino;
 
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+
+import org.apache.http.client.ClientProtocolException;
 
 import android.app.Notification.Builder;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -13,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 /**
@@ -22,10 +29,10 @@ import android.util.Log;
 public class BeaconSearchService extends Service
 {
 	// 信憑性の高い電波強度を得るためにとるデータの数
-	private static final int UUID_AVERAGE_NUM = 5;
+	private static final int UUID_AVERAGE_NUM = 8;
 	
 	// 店の近くにいると判断する電波強度の閾値
-	private static final int RSSI_ACCEPT_THRESHOLD = -60;
+	private static final int RSSI_ACCEPT_THRESHOLD = -70;
 
 	// iBeaconのUUIDを保持するリスト
 	private ArrayList<UuidData> _uuidList = new ArrayList<UuidData>();
@@ -34,10 +41,13 @@ public class BeaconSearchService extends Service
 	private BluetoothAdapter _bluetoothAdapter = null;
 	
 	// Notificationマネージャ
-	private NotificationManager notificationManager = null;
+	private NotificationManager _notificationManager = null;
 	
 	// ブロードキャストレシーバ
-	private BluetoothBroadcastReceiver bluetoothBR = null;
+	private BluetoothBroadcastReceiver _bluetoothBR = null;
+	
+	// ユーザ固有の番号
+	private int _userID;
 	
 	public BeaconSearchService()
 	{
@@ -52,15 +62,29 @@ public class BeaconSearchService extends Service
 		_bluetoothAdapter.startLeScan(mLeScanCallback);
 		
 		// ステータス通知を利用する準備
-		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		_notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		
 		// Bluetoothの状態が変わるのを検知
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 		
 		// ブロードキャストを受け取るレシーバを登録
-		bluetoothBR = new BluetoothBroadcastReceiver(this);
-		registerReceiver(bluetoothBR, intentFilter);
+		_bluetoothBR = new BluetoothBroadcastReceiver(this);
+		registerReceiver(_bluetoothBR, intentFilter);
+		
+		// 固有のユーザIDを作成
+		/*
+		TelephonyManager telephonyManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+		Log.e("aaaaa", telephonyManager.toString());
+		if(telephonyManager.getDeviceId() != null) Log.e("aaaaa", telephonyManager.getDeviceId());
+		if(telephonyManager.getDeviceSoftwareVersion() != null) Log.e("aaaaa", telephonyManager.getDeviceSoftwareVersion());
+		if(telephonyManager.getGroupIdLevel1() != null) Log.e("aaaaa", telephonyManager.getGroupIdLevel1());
+		if(telephonyManager.getLine1Number() != null) Log.e("aaaaa", telephonyManager.getLine1Number());
+		if(telephonyManager.getNetworkCountryIso() != null) Log.e("aaaaa", telephonyManager.getNetworkCountryIso());
+		if(telephonyManager.getNetworkOperator() != null) Log.e("aaaaa", telephonyManager.getNetworkOperator());
+		if(telephonyManager.getNetworkOperatorName() != null) Log.e("aaaaa", telephonyManager.getNetworkOperatorName());
+		//_userID = telephonyManager.getDeviceId().hashCode();
+		 */
 	}
 	
 	private class BluetoothBroadcastReceiver extends BroadcastReceiver
@@ -123,7 +147,18 @@ public class BeaconSearchService extends Service
 	    			int avgRssi = uuidData.getRssi();
 	    			uuidData.clearRssis();
 	    			
-	    			// TODO: 電波強度が強かったら店舗の近くにいることを伝える
+	    			
+	    			// 電波強度が強かったら店舗の近くにいることを伝える
+	    			if(avgRssi >= RSSI_ACCEPT_THRESHOLD)
+	    			{
+	    				try {
+							StoreDataConnector.notifyNearStoreUser(uuidData.UUID, _userID);
+						} catch (ClientProtocolException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+	    			}
 	    		}
 	    		// 信憑性のかける電波強度なのでもっとデータ数を取る
 	    		else
@@ -306,9 +341,16 @@ public class BeaconSearchService extends Service
 		Builder builder = new Builder(getApplicationContext());
 		builder.setContentTitle(info.Name);
 		builder.setContentText(info.SalesText);
-		builder.setTicker("お店の情報をキャッチしました!");
+		builder.setTicker("[" + info.Category + "]お店の情報をキャッチしました!");
 		builder.setSmallIcon(R.drawable.ic_launcher);
-		notificationManager.notify(info.UUID.hashCode(), builder.build());
+		
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setClassName("com.rabbithouse.chino", "StoreDetailActivity");
+		intent.putExtra("UUID", info.UUID);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		builder.setContentIntent(contentIntent);
+		
+		_notificationManager.notify(info.UUID.hashCode(), builder.build());
 	}
 	
 	@Override
@@ -321,7 +363,7 @@ public class BeaconSearchService extends Service
 	public void onDestroy() {
 		
 		// ブロードキャストレシーバの登録を削除
-		unregisterReceiver(bluetoothBR);
+		unregisterReceiver(_bluetoothBR);
 		
 		// BlurtoothLEの検知をストップする
 		_bluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -335,4 +377,7 @@ public class BeaconSearchService extends Service
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
+	
+	
+	
 }

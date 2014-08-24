@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#dfe"
+    tools:context="com.rabbithouse.chino.ActiveCustomerCountFragment" >
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/textView_category_const_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="64dp"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/textView_userCount_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#00f"
+        android:textSize="200sp" />
+
+    <TextView
+        android:id="@+id/textView_userCount_const_"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView_userCount_count"
+        android:layout_alignBottom="@+id/textView_userCount_count"
+        android:layout_toRightOf="@+id/textView_userCount_count"
+        android:text="人"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="80sp" />
+
+</RelativeLayout>
