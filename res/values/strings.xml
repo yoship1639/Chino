@@ -11,6 +11,9 @@
     <string name="title_activity_store_detail">StoreDetailActivity</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="title_section_category">カテゴリ</string>
+    <string name="title_section_home">ホーム</string>
+    
     <string name="title_section_store_detail">お店の情報</string>
     <string name="title_section_store_count">Chinoユーザの人数</string>
 </resources>

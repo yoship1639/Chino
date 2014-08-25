@@ -8,7 +8,7 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:id="@+id/textView_category_const_title"
+        android:id="@+id/textView_userCount_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -30,7 +30,7 @@
         android:textSize="200sp" />
 
     <TextView
-        android:id="@+id/textView_userCount_const_"
+        android:id="@+id/textView_userCount_const_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView_userCount_count"
@@ -39,5 +39,25 @@
         android:text="人"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="80sp" />
+
+    <TextView
+        android:id="@+id/textView_userCount_const_now"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView_userCount_const_num"
+        android:layout_marginBottom="39dp"
+        android:layout_toLeftOf="@+id/textView_userCount_count"
+        android:text="現在"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="48sp" />
+
+    <TextView
+        android:id="@+id/textView_userCount_const_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_userCount_title"
+        android:layout_centerHorizontal="true"
+        android:text="にいるChinoユーザの人数"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

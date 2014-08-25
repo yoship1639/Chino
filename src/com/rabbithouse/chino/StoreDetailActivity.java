@@ -43,7 +43,7 @@ public class StoreDetailActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_store_detail);
+		setContentView(R.layout._activity_store_detail);
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();

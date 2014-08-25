@@ -10,22 +10,22 @@
     tools:context="com.rabbithouse.chino.HomeActivity$PlaceholderFragment" >
 
     <TextView
-        android:id="@+id/textView_category_const_title"
+        android:id="@+id/textView_userCount_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="100dp"
         android:layout_marginTop="16dp"
-        android:text="受信するカテゴリ"
+        android:text="情報を受け取るお店のカテゴリ"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="36sp" />
+        android:textSize="30sp" />
 
     <CheckBox
         android:id="@+id/checkBox_category_fasion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView_category_const_title"
+        android:layout_below="@+id/textView_userCount_title"
         android:layout_marginLeft="40dp"
         android:layout_marginTop="16dp"
         android:text="ファッション"

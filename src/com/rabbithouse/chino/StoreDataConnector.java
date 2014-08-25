@@ -139,6 +139,30 @@ public class StoreDataConnector
 	}
 	
 	/**
+	 * UUIDから店舗にいるChinoユーザの人数を得る
+	 * @param uuid 店舗に設置しているiBeaconのUUID
+	 * @return 店舗にいるChinoユーザの人数
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static int getActiveCustomerCount(String uuid) throws ClientProtocolException, IOException, JSONException
+	{
+		// UUIDとユーザ固有IDをURIに埋め込む
+		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/getActiveCustomerCount/");
+		uri.append(encryptString(uuid));
+		
+		// HTTPリクエストを送り、JSONオブジェクトを得る
+		JSONObject jsonRoot = getJsonObjectByHTTPRequest(uri.toString());
+		
+		// JSONオブジェクトから店舗にいるChinoユーザの数を得る
+		JSONObject obj = jsonRoot.getJSONArray("data").getJSONObject(0);
+		int count = obj.getInt("activeCustomerCount");
+		
+		return count;
+	}
+	
+	/**
 	 * 指定のURIにHTTPリクエストを送る
 	 * @param uri HTTPリクエストを送るURI
 	 * @return リクエスト結果
