@@ -29,7 +29,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginTop="16dp"
         android:text="ファッション"
-        android:drawableBottom="@drawable/icon_fasion"
+        android:drawableStart="@drawable/icon_fasion"
         android:textSize="24sp" />
 
     <CheckBox
@@ -38,20 +38,9 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/checkBox_category_fasion"
         android:layout_below="@+id/checkBox_category_fasion"
-        android:layout_marginTop="41dp"
-        android:drawableBottom="@drawable/icon_restaurant"
+        android:layout_marginTop="48dp"
+        android:drawableStart="@drawable/icon_restaurant"
         android:text="レストラン"
-        android:textSize="24sp" />
-
-    <CheckBox
-        android:id="@+id/checkBox_category_hobby"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/checkBox_category_restaurant"
-        android:layout_alignRight="@+id/textView_userCount_title"
-        android:layout_marginRight="44dp"
-        android:drawableBottom="@drawable/icon_hobby"
-        android:text="ホビー"
         android:textSize="24sp" />
 
     <CheckBox
@@ -61,7 +50,7 @@
         android:layout_alignBaseline="@+id/checkBox_category_restaurant"
         android:layout_alignBottom="@+id/checkBox_category_restaurant"
         android:layout_alignLeft="@+id/checkBox_category_hobby"
-        android:drawableBottom="@drawable/icon_grocery"
+        android:drawableStart="@drawable/icon_grocery"
         android:text="食料品"
         android:textSize="24sp" />
 
@@ -71,20 +60,9 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/checkBox_category_restaurant"
         android:layout_below="@+id/checkBox_category_restaurant"
-        android:layout_marginTop="51dp"
-        android:drawableBottom="@drawable/icon_daily_necessities"
+        android:layout_marginTop="48dp"
+        android:drawableStart="@drawable/icon_daily_necessities"
         android:text="日用雑貨"
-        android:textSize="24sp" />
-
-    <CheckBox
-        android:id="@+id/checkBox_category_interior"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/checkBox_category_dailyNecessities"
-        android:layout_alignBottom="@+id/checkBox_category_dailyNecessities"
-        android:layout_alignLeft="@+id/checkBox_category_grocery"
-        android:drawableBottom="@drawable/icon_interior"
-        android:text="家具・インテリア"
         android:textSize="24sp" />
 
     <CheckBox
@@ -93,18 +71,40 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/checkBox_category_dailyNecessities"
         android:layout_below="@+id/checkBox_category_interior"
-        android:layout_marginTop="43dp"
-        android:drawableBottom="@drawable/icon_service"
+        android:layout_marginTop="48dp"
+        android:drawableStart="@drawable/icon_service"
         android:text="サービス"
+        android:textSize="24sp" />
+
+    <CheckBox
+        android:id="@+id/checkBox_category_hobby"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/checkBox_category_fasion"
+        android:layout_alignBottom="@+id/checkBox_category_fasion"
+        android:layout_alignRight="@+id/textView_userCount_title"
+        android:drawableStart="@drawable/icon_hobby"
+        android:text="ホビー"
+        android:textSize="24sp" />
+
+    <CheckBox
+        android:id="@+id/checkBox_category_interior"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/checkBox_category_grocery"
+        android:layout_alignTop="@+id/checkBox_category_dailyNecessities"
+        android:drawableStart="@drawable/icon_interior"
+        android:text="家具・インテリア"
         android:textSize="24sp" />
 
     <CheckBox
         android:id="@+id/checkBox_category_etc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/checkBox_category_service"
         android:layout_alignBottom="@+id/checkBox_category_service"
         android:layout_alignLeft="@+id/checkBox_category_interior"
-        android:drawableBottom="@drawable/icon_etc"
+        android:drawableStart="@drawable/icon_etc"
         android:text="その他"
         android:textSize="24sp" />
 

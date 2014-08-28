@@ -25,7 +25,7 @@
         android:src="@drawable/chino_logo3" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/imageView_home_icon"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_alignLeft="@+id/imageView_home_title"
