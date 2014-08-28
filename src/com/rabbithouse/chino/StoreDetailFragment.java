@@ -22,7 +22,7 @@ import android.widget.TextView;
  * of this fragment.
  *
  */
-public class StoreDetailFragment extends Fragment 
+public class StoreDetailFragment extends Fragment
 {
 	StoreDetail storeDetail;
 
@@ -63,7 +63,9 @@ public class StoreDetailFragment extends Fragment
 			
 			// 詳細情報をセット
 			WebView web = (WebView)view.findViewById(R.id.webView_store_detail_detail);
-			web.loadData(storeDetail.Detail, "text/html", "utf-8");
+			//web.getSettings().setJavaScriptEnabled(true);
+			//web.loadUrl("http://www.etecminds.com/");
+			web.loadData(storeDetail.Detail, "text/html; charset=utf-8", "utf-8");
 			
 			// リンクボタンを押したときの処理をセット
 			if(storeDetail.URL != null && !storeDetail.URL.isEmpty())
@@ -80,7 +82,28 @@ public class StoreDetailFragment extends Fragment
 		            }
 		        });
 			}
+			
+			// 更新日時
+			((TextView)view.findViewById(R.id.textView_storeDetail_updateDate)).setText("更新日時: " + storeDetail.UpdateDate);
+			
+			
 		}
+		
+		// ホームに戻る
+		Button homeBtn = (Button)view.findViewById(R.id.button_storeDetail_back);
+		homeBtn.setOnClickListener(new View.OnClickListener()
+		{
+			// ボタンが押されたとき
+            @Override
+            public void onClick(View v)
+            {
+            	// 店のURLに飛ぶ
+            	Intent intent = new Intent();
+            	intent.setClassName("com.rabbithouse.chino", "com.rabbithouse.chino.HomeActivity");
+            	startActivity(intent);
+            	getActivity().finish();
+            }
+        });
 		
 		return view;
 	}

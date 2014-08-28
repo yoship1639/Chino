@@ -14,7 +14,9 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,7 +43,8 @@ public class StoreDetailActivity extends Activity implements
 	ViewPager mViewPager;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout._activity_store_detail);
 
@@ -53,15 +56,23 @@ public class StoreDetailActivity extends Activity implements
 		Intent intent = getIntent();
 		String uuid = intent.getStringExtra("UUID");
 		StoreDetail storeDetail = null;
-		try {
-			storeDetail = StoreDataConnector.getStoreDetail(uuid);
-		} catch (ClientProtocolException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} catch (JSONException e1) {
-			e1.printStackTrace();
+		
+		if(uuid != null && uuid != "")
+		{
+			Log.e("uuid", uuid);
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+			try {
+				storeDetail = StoreDataConnector.getStoreDetail(uuid);
+			} catch (ClientProtocolException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
 		}
+		
+		
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), storeDetail);

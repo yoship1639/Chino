@@ -4,16 +4,24 @@
     <string name="app_name">Chino</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_home">Chino</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="title_activity_store_detail">StoreDetailActivity</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="title_section_category">カテゴリ</string>
     <string name="title_section_home">ホーム</string>
-    
     <string name="title_section_store_detail">お店の情報</string>
     <string name="title_section_store_count">Chinoユーザの人数</string>
+    <string name="uri_find_store_info">07E6823C4CD98DF80A28DB3576182874335EC08A3E40C2D6BA1EB85541F49340</string>
+    <string name="uri_find_store_detail">475D6AE6B570A302F8E1F899FC45E6338603AE28D05B0ADF6A182C14241F6838</string>
+    <string name="uri_notify_active_customer">D6251E48DF8E14B395AB25F40A9111AEA7519C2951F9F34D9D004BFE696F2C8A</string>
+    <string name="uri_get_active_customer_count">1604551369D073E19AAC0415D84D2220559EAFDAF58B0C67565059D3995DDD76</string>
+    <string name="uri_find_store_info2">findStoreInfo</string>
+    <string name="uri_find_store_detail2">findStoreDetail</string>
+    <string name="uri_notify_active_customer2">notifyActiveCustomer</string>
+    <string name="uri_get_active_customer_count2">getActiveCustomerCount</string>
+    <string name="title_activity_open_store_detail">OpenStoreDetailActivity</string>
+
 </resources>

@@ -20,7 +20,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon_chino"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -38,7 +38,6 @@
             android:name=".StoreDetailActivity"
             android:label="@string/title_activity_store_detail" >
         </activity>
-        
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home" >
@@ -46,6 +45,10 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".OpenStoreDetailActivity"
+            android:label="@string/title_activity_open_store_detail" >
         </activity>
     </application>
 

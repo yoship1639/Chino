@@ -5,16 +5,6 @@
     android:background="#def"
     tools:context="com.rabbithouse.chino.HomeActivity$PlaceholderFragment" >
 
-    <ImageView
-        android:id="@+id/imageView_home_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginTop="40dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/chino_logo3" />
-
     <Switch
         android:id="@+id/switch_home_search"
         android:layout_width="wrap_content"
@@ -23,5 +13,23 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="113dp"
         android:text="お店情報をキャッチ" />
+
+    <ImageView
+        android:id="@+id/imageView_home_title"
+        android:layout_width="300dp"
+        android:layout_height="120dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/chino_logo3" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_alignLeft="@+id/imageView_home_title"
+        android:layout_centerVertical="true"
+        android:src="@drawable/icon_chino" />
 
 </RelativeLayout>

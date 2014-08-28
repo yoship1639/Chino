@@ -1,5 +1,7 @@
 package com.rabbithouse.chino;
 
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 /**
@@ -19,6 +22,14 @@ import android.widget.TextView;
  */
 public class CategoryFragment extends Fragment
 {
+	CheckBox fasion;
+	CheckBox hobby;
+	CheckBox restaurant;
+	CheckBox grocery;
+	CheckBox daily;
+	CheckBox interior;
+	CheckBox service;
+	CheckBox etc;
 
 	public static CategoryFragment newInstance()
 	{
@@ -36,14 +47,24 @@ public class CategoryFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
-		// TODO: カテゴリを読み込み
+
 	}
 	
 	@Override
 	public void onStop()
 	{
 		// TODO: カテゴリの保存
+		HashMap<String, Boolean> map = new HashMap<String, Boolean>();
+		map.put("fasion", fasion.isChecked());
+		map.put("hobby", hobby.isChecked());
+		map.put("restaurant", restaurant.isChecked());
+		map.put("grocery", grocery.isChecked());
+		map.put("daily", daily.isChecked());
+		map.put("interior", interior.isChecked());
+		map.put("service", service.isChecked());
+		map.put("etc", etc.isChecked());
+		
+		DataConnector.saveCategoryCheck(getActivity(), map);
 		
 		super.onStop();
 	}
@@ -52,6 +73,33 @@ public class CategoryFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_category, container, false);
+		
+		// TODO: カテゴリを読み込み
+		HashMap<String, Boolean> map = DataConnector.loadCategoryCheckList(getActivity());
+
+		fasion = ((CheckBox)view.findViewById(R.id.checkBox_category_fasion));
+		fasion.setChecked(map.get("fasion"));
+		
+		hobby = ((CheckBox)view.findViewById(R.id.checkBox_category_hobby));
+		hobby.setChecked(map.get("hobby"));
+		
+		restaurant = ((CheckBox)view.findViewById(R.id.checkBox_category_restaurant));
+		restaurant.setChecked(map.get("restaurant"));
+		
+		grocery = ((CheckBox)view.findViewById(R.id.checkBox_category_grocery));
+		grocery.setChecked(map.get("grocery"));
+		
+		daily = ((CheckBox)view.findViewById(R.id.checkBox_category_dailyNecessities));
+		daily.setChecked(map.get("daily"));
+		
+		interior = ((CheckBox)view.findViewById(R.id.checkBox_category_interior));
+		interior.setChecked(map.get("interior"));
+		
+		service = ((CheckBox)view.findViewById(R.id.checkBox_category_service));
+		service.setChecked(map.get("service"));
+		
+		etc = ((CheckBox)view.findViewById(R.id.checkBox_category_etc));
+		etc.setChecked(map.get("etc"));
 		
 		return view;
 	}

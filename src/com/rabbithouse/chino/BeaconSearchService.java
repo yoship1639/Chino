@@ -43,8 +43,9 @@ public class BeaconSearchService extends Service
 	// Notificationマネージャ
 	private NotificationManager _notificationManager = null;
 	
-	// ブロードキャストレシーバ
+	// Bluetooth用のブロードキャストレシーバ
 	private BluetoothBroadcastReceiver _bluetoothBR = null;
+	
 	
 	// ユーザ固有の番号
 	private int _userID;
@@ -64,11 +65,9 @@ public class BeaconSearchService extends Service
 		// ステータス通知を利用する準備
 		_notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		
-		// Bluetoothの状態が変わるのを検知
+		// Bluetoothの状態の変化を受け取るレシーバを登録
 		IntentFilter intentFilter = new IntentFilter();
 		intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-		
-		// ブロードキャストを受け取るレシーバを登録
 		_bluetoothBR = new BluetoothBroadcastReceiver(this);
 		registerReceiver(_bluetoothBR, intentFilter);
 		
@@ -96,7 +95,8 @@ public class BeaconSearchService extends Service
 			this.bss = bss;
 		}
 		@Override
-		public void onReceive(Context context, Intent intent) {
+		public void onReceive(Context context, Intent intent)
+		{
 			 if (intent.getAction().equals(BluetoothAdapter.ACTION_STATE_CHANGED))
 			 {
 				 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
@@ -105,17 +105,18 @@ public class BeaconSearchService extends Service
 				 {
 				 case BluetoothAdapter.STATE_ON:			// BluetoothがONに変わったとき
 					 // iBeaconのスキャンを開始
+					 Log.i("bluetooth", "bluetoothがONになったよ!");
 					 bss._bluetoothAdapter.startLeScan(mLeScanCallback);
 					 break;
 					 
 				 case BluetoothAdapter.STATE_TURNING_OFF:	// BluetoothがOFFに変わるとき
 					 // iBeaconのスキャンを停止
+					 Log.i("bluetooth", "bluetoothがOFFになったよ!");
 					 bss._bluetoothAdapter.stopLeScan(mLeScanCallback);
 					 break;
 				 }
 			 }
 		}
-		
 	}
 	
 	/**
@@ -129,20 +130,25 @@ public class BeaconSearchService extends Service
 	    @Override
 	    public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord)
 	    {
+	    	//_bluetoothAdapter.stopLeScan(mLeScanCallback);
+	    	
+	    	Log.i("beacon", "何かきた RSSI:" + rssi);
 	    	// UUIDを得る
 	    	String uuid = GetBeaconUuid(scanRecord);
 	    	if(uuid == null) return;
-	    	
-	    	Log.e("UUID", uuid);
 	    	
 	    	UuidData uuidData = findUuid(uuid);
 	 
 	    	// すでに検知済みのUUIDならば
 	    	if(uuidData != null)
 	    	{
+	    		Log.i("beacon", "すでに検知済みのUUID");
+	    		
 	    		// 平均値を得るのに十分なデータがとれたら
 	    		if(uuidData.getRssiNum() >= UUID_AVERAGE_NUM)
 	    		{
+	    			Log.i("beacon", "平均値を得るのに十分なデータがとれたyo!");
+	    			
 	    			// 電波強度の平均値をとる
 	    			int avgRssi = uuidData.getRssi();
 	    			uuidData.clearRssis();
@@ -162,7 +168,7 @@ public class BeaconSearchService extends Service
 	    		}
 	    		// 信憑性のかける電波強度なのでもっとデータ数を取る
 	    		else
-	    		{
+	    		{	
 	    			uuidData.addRssi(rssi);
 	    			return;
 	    		}
@@ -170,6 +176,8 @@ public class BeaconSearchService extends Service
 	    	// はじめて検知するUUIDならば
 	    	else
 	    	{
+	    		Log.i("beacon", "はじめて検知するUUID");
+	    		
 	    		StoreInfo info = null;
 	    		try
 	    		{
@@ -188,6 +196,8 @@ public class BeaconSearchService extends Service
 	    		// 店舗情報をステータス通知に送る
 	    		NotifyStoreInfo(info);
 	    	}
+	    	
+	    	//_bluetoothAdapter.startLeScan(mLeScanCallback);
 	    }
 	};
 	
@@ -338,29 +348,35 @@ public class BeaconSearchService extends Service
 	 */
 	private void NotifyStoreInfo(StoreInfo info)
 	{
+		
 		Builder builder = new Builder(getApplicationContext());
 		builder.setContentTitle(info.Name);
 		builder.setContentText(info.SalesText);
 		builder.setTicker("[" + info.Category + "]お店の情報をキャッチしました!");
-		builder.setSmallIcon(R.drawable.ic_launcher);
+		builder.setSmallIcon(DataConnector.getCategoryIcon(info.Category));
 		
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setClassName("com.rabbithouse.chino", "StoreDetailActivity");
+		Intent intent = new Intent();
+		intent.setClassName("com.rabbithouse.chino", "com.rabbithouse.chino.StoreDetailActivity");
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.putExtra("UUID", info.UUID);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		builder.setContentIntent(contentIntent);
 		
 		_notificationManager.notify(info.UUID.hashCode(), builder.build());
 	}
 	
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		// TODO Auto-generated method stub
+	public int onStartCommand(Intent intent, int flags, int startId)
+	{
+		// TODO: bluetoothLEの受信を開始
+		Log.i("onStartCommand", "onStartCommandが呼ばれたよ!");
 		return super.onStartCommand(intent, flags, startId);
 	}
 	
 	@Override
-	public void onDestroy() {
+	public void onDestroy()
+	{
+		Log.i("onStartCommand", "onDestroyが呼ばれたよ!");
 		
 		// ブロードキャストレシーバの登録を削除
 		unregisterReceiver(_bluetoothBR);
@@ -377,7 +393,5 @@ public class BeaconSearchService extends Service
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
-	
-	
+
 }

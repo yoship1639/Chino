@@ -61,7 +61,7 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
 						actionBar.setSelectedNavigationItem(position);
 					}
 				});
-
+		
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
 			// Create a tab with text corresponding to the page title defined by
@@ -72,6 +72,8 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+		
+		mViewPager.setCurrentItem(1);
 	}
 
 	@Override
@@ -132,6 +134,8 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
 				return CategoryFragment.newInstance();
 			case 1:
 				return HomeFragment.newInstance();
+			//case 2:
+				//return StoreListFragment.newInstance(infos);
 			}
 			return null;
 		}
@@ -153,4 +157,5 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
 		}
 	}
 
+	
 }

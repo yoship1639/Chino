@@ -56,14 +56,15 @@ public class ActiveCustomerCountFragment extends Fragment
 		if (getArguments() == null) return;
 		storeDetail = getArguments().getParcelable("StoreDetail");
 		
-		timer = new Timer();
 		handler = new Handler();
 	}
 	
 	@Override
 	public void onResume()
 	{
+		timer = new Timer();
 		// タイマー開始
+		
 		timer.schedule(new TimerTask()
 		{
 	        @Override
@@ -77,7 +78,7 @@ public class ActiveCustomerCountFragment extends Fragment
 	                	// サーバに店舗にいるChinoユーザの人数を問い合わせる
 	                	int count = 0;
 						try {
-							count = StoreDataConnector.getActiveCustomerCount(storeDetail.UUID);
+							if(storeDetail != null)count = StoreDataConnector.getActiveCustomerCount(storeDetail.UUID);
 						} catch (ClientProtocolException e) {
 							e.printStackTrace();
 						} catch (IOException e) {
@@ -100,6 +101,7 @@ public class ActiveCustomerCountFragment extends Fragment
 	{
 		// タイマーをストップ
 		timer.cancel();
+		timer = null;
 		
 		super.onPause();
 	}
@@ -109,9 +111,14 @@ public class ActiveCustomerCountFragment extends Fragment
 	{
 		View view = inflater.inflate(R.layout.fragment_active_customer_count, container, false);
 		
-		// タイトルの表示名を変える
-		TextView title = (TextView)view.findViewById(R.id.textView_userCount_title);
-		title.setText("[" + storeDetail.Name + "]にいるChinoユーザの人数");
+		if(storeDetail != null)
+		{
+			// タイトルの表示名を変える
+			TextView title = (TextView)view.findViewById(R.id.textView_userCount_title);
+			title.setText(storeDetail.Name);
+		}
+		
+		textView_count = (TextView)view.findViewById(R.id.textView_userCount_count);
 		
 		return view;
 	}

@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
@@ -16,6 +17,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 /**
@@ -35,9 +42,10 @@ public class StoreDataConnector
 	 */
 	public static StoreInfo getStoreInfo(String uuid) throws ClientProtocolException, IOException, JSONException
 	{
-		
 		// UUIDをURIに埋め込む
-		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/findStoreInfo/");
+		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/");
+		uri.append("findStoreInfo");
+		uri.append("/");
 		uri.append(encryptString(uuid));
 		
 		// JSONデータを受け取る
@@ -52,6 +60,13 @@ public class StoreDataConnector
 		info.UUID = uuid;
 		
 		return info;
+		/*
+		StoreInfo info = new StoreInfo();
+		info.Name = "藤嶋書店";
+		info.Category = "ホビー";
+		info.SalesText = "今ならなんと全書籍10割引き！！！";
+		info.UUID = "11111";
+		return info;*/
 	}
 	
 	/**
@@ -64,8 +79,11 @@ public class StoreDataConnector
 	 */
 	public static StoreDetail getStoreDetail(String uuid) throws ClientProtocolException, IOException, JSONException
 	{
+		
 		// UUIDをURIに埋め込む
-		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/findStoreDetail/");
+		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/");
+		uri.append("findStoreDetail");
+		uri.append("/");
 		uri.append(encryptString(uuid));
 		
 		// JSONデータを受け取る
@@ -83,6 +101,34 @@ public class StoreDataConnector
 		detail.UUID = uuid;
 		
 		return detail;
+		
+		/*
+		StoreDetail detail = new StoreDetail();
+		detail.Name = "藤嶋書店";
+		detail.Category = "ホビー";
+		detail.SalesText = "今ならなんと全書籍10割引き！！！";
+		detail.Detail = "<!DOCTYPE html><html><head></head><body>"
+				+ "<p>シャロ！シャロ！シャロ！シャロぅぅうううわぁああああああああああああああああああああああん！！！</p>"
+				+ "<p>あぁああああ…ああ…あっあっー！あぁああああああ！！！シャロシャロシャロぅううぁわぁああああ！！！</p>"
++ "<p>あぁクンカクンカ！クンカクンカ！スーハースーハー！スーハースーハー！いい匂いだなぁ…くんくん</p>"
++ "<p>んはぁっ！シャロ・フランソワーズたんの桃色ブロンドの髪をクンカクンカしたいお！クンカクンカ！あぁあ！！</p>"
++ "<p>間違えた！モフモフしたいお！モフモフ！モフモフ！髪髪モフモフ！カリカリモフモフ…きゅんきゅんきゅい！！</p>"
++ "<p>12話のシャロたんかわいかったよぅ！！あぁぁああ…あああ…あっあぁああああ！！ふぁぁあああんんっ！！</p>"
++ "<p>アニメ2期放送されて良かったねシャロたん！あぁあああああ！かわいい！シャロたん！かわいい！あっああぁああ！</p>"
++ "<p>コミック2巻も発売されて嬉し…いやぁああああああ！！！にゃああああああああん！！ぎゃああああああああ！！</p>"
++ "<p>ぐあああああああああああ！！！コミックなんて現実じゃない！！！！あ…小説もアニメもよく考えたら…</p>"
++ "<p>シ　ャ　ロ　ち ゃ ん は 現実 じ ゃ な い？にゃあああああああああああああん！！うぁああああああああああ！！</p>"
++ "<p>そんなぁああああああ！！いやぁぁぁあああああああああ！！はぁああああああん！！</p>"
++ "<p>この！ちきしょー！やめてやる！！現実なんかやめ…て…え！？見…てる？表紙絵のシャロちゃんが僕を見てる？</p>"
++ "<p>表紙絵のシャロちゃんが僕を見てるぞ！シャロちゃんが僕を見てるぞ！挿絵のシャロちゃんが僕を見てるぞ！！</p>"
++ "<p>アニメのシャロちゃんが僕に話しかけてるぞ！！！よかった…世の中まだまだ捨てたモンじゃないんだねっ！</p>"
++ "<p>いやっほぉおおおおおおお！！！僕にはシャロちゃんがいる！！</p>"
+				+ "</body></html>";
+		detail.URL = "https://www.google.co.jp/";
+		detail.UpdateDate = "2014-08-28 12:00:00";
+		detail.UUID = "11111";
+		
+		return detail;*/
 	}
 	
 	
@@ -97,6 +143,7 @@ public class StoreDataConnector
 	 */
 	private static JSONObject getJsonObjectByHTTPRequest(String uri) throws ClientProtocolException, IOException, JSONException
 	{
+		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet request = new HttpGet(uri.toString());
 		
@@ -117,6 +164,8 @@ public class StoreDataConnector
         // JSONオブジェクトを返す
 		return new JSONObject(data);
 		
+		
+		
 	}
 	
 	/**
@@ -128,8 +177,11 @@ public class StoreDataConnector
 	 */
 	public static void notifyNearStoreUser(String uuid, int userID) throws ClientProtocolException, IOException
 	{
+		
 		// UUIDとユーザ固有IDをURIに埋め込む
-		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/notifyActiveCustomer/");
+		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/");
+		uri.append("notifyActiveCustomer");
+		uri.append("/");
 		uri.append(encryptString(uuid));
 		uri.append("/");
 		uri.append(userID);
@@ -148,8 +200,11 @@ public class StoreDataConnector
 	 */
 	public static int getActiveCustomerCount(String uuid) throws ClientProtocolException, IOException, JSONException
 	{
+		
 		// UUIDとユーザ固有IDをURIに埋め込む
-		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/getActiveCustomerCount/");
+		StringBuilder uri = new StringBuilder("http://chino.herokuapp.com/api/");
+		uri.append("getActiveCustomerCount");
+		uri.append("/");
 		uri.append(encryptString(uuid));
 		
 		// HTTPリクエストを送り、JSONオブジェクトを得る
@@ -160,6 +215,8 @@ public class StoreDataConnector
 		int count = obj.getInt("activeCustomerCount");
 		
 		return count;
+		
+		//return 10;
 	}
 	
 	/**
@@ -183,7 +240,8 @@ public class StoreDataConnector
 	 * @param text ハッシュ化する文字列
 	 * @return
 	 */
-	private static String encryptString(String text) {
+	private static String encryptString(String text)
+	{
 	    // 変数初期化
 	    MessageDigest md = null;
 	    StringBuffer buffer = new StringBuffer();
@@ -218,6 +276,107 @@ public class StoreDataConnector
 	 
 	    // 完了したハッシュ計算値を返却
 	    return buffer.toString();
+	}
+	
+	/**
+	 * 店舗情報を記憶する
+	 * @param context データベースに接続するためのコンテキスト
+	 * @param info 記憶する店舗情報
+	 */
+	public static void saveStoreInfo(Context context, StoreInfo info)
+	{
+		Log.i("save", "店舗情報をローカルデータベースに保存するよ！");
+		// SQLiteを使用する準備
+		MySQLiteOpenHelper sql = new MySQLiteOpenHelper(context);
+		SQLiteDatabase db = sql.getWritableDatabase();
+		
+		// 指定のUUIDが存在するかを検索
+		Cursor c = db.rawQuery("select uuid from table_chino where uuid=?;", new String[]{ info.UUID });
+		
+		// 保存するデータを作成
+		ContentValues values = new ContentValues();
+		values.put("uuid", info.UUID);
+		values.put("name", info.Name);
+		values.put("category", info.Category);
+		values.put("sales", info.SalesText);
+		
+		// データが存在していない場合は挿入
+		if(c.getCount() != 0)
+		{
+			db.insert("table_chino", null, values);
+		}
+		
+	}
+	
+	/**
+	 * 記憶された店舗情報をすべて読み込む
+	 * @param context データベースに接続するためのコンテキスト
+	 * @return 店舗情報の配列
+	 */
+	public static StoreInfo[] loadStoreInfos(Context context)
+	{
+		// SQLiteを使用する準備
+		MySQLiteOpenHelper sql = new MySQLiteOpenHelper(context);
+		SQLiteDatabase db = sql.getWritableDatabase();
+		
+		// すべてのデータを検索するクエリ
+		Cursor c = db.rawQuery("select * from table_chino;", null);
+		
+		// データを1件ずつ取り出す
+		StoreInfo[] infos = new StoreInfo[c.getCount()];	
+		for(int i = 0; i < infos.length; i++)
+		{
+			int uuidIndex = c.getColumnIndex("uuid");
+			int nameIndex = c.getColumnIndex("name");
+			int categoryIndex = c.getColumnIndex("category");
+			int salesIndex = c.getColumnIndex("sales");
+			
+			StoreInfo info = new StoreInfo();
+			info.UUID = c.getString(uuidIndex);
+			info.Name = c.getString(nameIndex);
+			info.Category = c.getString(categoryIndex);
+			info.SalesText = c.getString(salesIndex);
+			
+			infos[i] = info;
+		}
+		
+		return infos;
+	}
+	
+	private static class MySQLiteOpenHelper extends SQLiteOpenHelper
+	{
+		private static final String DB_NAME = "sqlite_chino.db";
+		private static final int DB_VERSION = 1;
+		
+		private static final String CREATE_TABLE = "create table table_chino ( uuid text primary key, name text not null, category text not null, sales text );";
+		private static final String DROP_TABLE = "drop table table_chino;";
+
+		public MySQLiteOpenHelper(Context context)
+		{
+			super(context, DB_NAME, null, DB_VERSION);
+		}
+
+		/**
+		 * データベースが存在しなかったとき
+		 */
+		@Override
+		public void onCreate(SQLiteDatabase db)
+		{
+			// テーブルを作成する
+			db.execSQL(CREATE_TABLE);
+		}
+
+		/**
+		 * データベースのアップグレードが必要になったとき
+		 */
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+		{
+			// テーブルを生成しなおす
+			db.execSQL(DROP_TABLE);
+			onCreate(db);
+		}
+		
 	}
 }
 
