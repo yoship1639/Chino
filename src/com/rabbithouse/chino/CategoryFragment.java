@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 /**
@@ -20,7 +22,7 @@ import android.widget.TextView;
  * this fragment.
  *
  */
-public class CategoryFragment extends Fragment
+public class CategoryFragment extends Fragment implements OnCheckedChangeListener
 {
 	CheckBox fasion;
 	CheckBox hobby;
@@ -53,20 +55,25 @@ public class CategoryFragment extends Fragment
 	@Override
 	public void onStop()
 	{
-		// TODO: カテゴリの保存
-		HashMap<String, Boolean> map = new HashMap<String, Boolean>();
-		map.put("fasion", fasion.isChecked());
-		map.put("hobby", hobby.isChecked());
-		map.put("restaurant", restaurant.isChecked());
-		map.put("grocery", grocery.isChecked());
-		map.put("daily", daily.isChecked());
-		map.put("interior", interior.isChecked());
-		map.put("service", service.isChecked());
-		map.put("etc", etc.isChecked());
-		
-		DataConnector.saveCategoryCheck(getActivity(), map);
+		// カテゴリの保存
+		saveCategory();
 		
 		super.onStop();
+	}
+	
+	private void saveCategory()
+	{
+		HashMap<String, Boolean> map = new HashMap<String, Boolean>();
+		map.put("ファッション", fasion.isChecked());
+		map.put("グッズ", hobby.isChecked());
+		map.put("飲食店", restaurant.isChecked());
+		map.put("食料品", grocery.isChecked());
+		map.put("日用雑貨", daily.isChecked());
+		map.put("家具・インテリア", interior.isChecked());
+		map.put("サービス", service.isChecked());
+		map.put("その他", etc.isChecked());
+		
+		DataConnector.saveCategoryCheck(getActivity(), map);
 	}
 
 	@Override
@@ -78,30 +85,58 @@ public class CategoryFragment extends Fragment
 		HashMap<String, Boolean> map = DataConnector.loadCategoryCheckList(getActivity());
 
 		fasion = ((CheckBox)view.findViewById(R.id.checkBox_category_fasion));
-		fasion.setChecked(map.get("fasion"));
+		fasion.setTag("ファッション");
 		
 		hobby = ((CheckBox)view.findViewById(R.id.checkBox_category_hobby));
-		hobby.setChecked(map.get("hobby"));
+		hobby.setTag("グッズ");
 		
 		restaurant = ((CheckBox)view.findViewById(R.id.checkBox_category_restaurant));
-		restaurant.setChecked(map.get("restaurant"));
+		restaurant.setTag("飲食店");
 		
 		grocery = ((CheckBox)view.findViewById(R.id.checkBox_category_grocery));
-		grocery.setChecked(map.get("grocery"));
+		grocery.setTag("食料品");
 		
 		daily = ((CheckBox)view.findViewById(R.id.checkBox_category_dailyNecessities));
-		daily.setChecked(map.get("daily"));
+		daily.setTag("日用雑貨");
 		
 		interior = ((CheckBox)view.findViewById(R.id.checkBox_category_interior));
-		interior.setChecked(map.get("interior"));
+		interior.setTag("家具・インテリア");
 		
 		service = ((CheckBox)view.findViewById(R.id.checkBox_category_service));
-		service.setChecked(map.get("service"));
+		service.setTag("サービス");
 		
 		etc = ((CheckBox)view.findViewById(R.id.checkBox_category_etc));
-		etc.setChecked(map.get("etc"));
+		etc.setTag("その他");
+		
+		fasion.setOnCheckedChangeListener(this);
+		hobby.setOnCheckedChangeListener(this);
+		restaurant.setOnCheckedChangeListener(this);
+		grocery.setOnCheckedChangeListener(this);
+		daily.setOnCheckedChangeListener(this);
+		interior.setOnCheckedChangeListener(this);
+		service.setOnCheckedChangeListener(this);
+		etc.setOnCheckedChangeListener(this);
+		
+		fasion.setChecked(map.get("ファッション"));
+		hobby.setChecked(map.get("グッズ"));
+		restaurant.setChecked(map.get("飲食店"));
+		grocery.setChecked(map.get("食料品"));
+		daily.setChecked(map.get("日用雑貨"));
+		interior.setChecked(map.get("家具・インテリア"));
+		service.setChecked(map.get("サービス"));
+		etc.setChecked(map.get("その他"));
 		
 		return view;
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+	{
+		int id = 0;
+		if(isChecked) id = DataConnector.getCategoryIcon((String)buttonView.getTag());
+		else id = DataConnector.getCategoryMonoIcon((String)buttonView.getTag());
+		buttonView.setCompoundDrawablesRelativeWithIntrinsicBounds(id, 0, 0, 0);
+		saveCategory();
 	}
 
 }

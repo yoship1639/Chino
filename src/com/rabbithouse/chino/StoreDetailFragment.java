@@ -67,10 +67,11 @@ public class StoreDetailFragment extends Fragment
 			//web.loadUrl("http://www.etecminds.com/");
 			web.loadData(storeDetail.Detail, "text/html; charset=utf-8", "utf-8");
 			
+			
 			// リンクボタンを押したときの処理をセット
+			Button lnkBtn = (Button)view.findViewById(R.id.button_store_detail_link);
 			if(storeDetail.URL != null && !storeDetail.URL.isEmpty())
 			{
-				Button lnkBtn = (Button)view.findViewById(R.id.button_store_detail_link);
 				lnkBtn.setOnClickListener(new View.OnClickListener()
 				{
 					// ボタンが押されたとき
@@ -82,6 +83,7 @@ public class StoreDetailFragment extends Fragment
 		            }
 		        });
 			}
+			else lnkBtn.setVisibility(Button.INVISIBLE);
 			
 			// 更新日時
 			((TextView)view.findViewById(R.id.textView_storeDetail_updateDate)).setText("更新日時: " + storeDetail.UpdateDate);

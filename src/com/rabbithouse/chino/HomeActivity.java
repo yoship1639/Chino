@@ -119,7 +119,6 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter
 	{
-
 		public SectionsPagerAdapter(FragmentManager fm)
 		{
 			super(fm);
@@ -134,14 +133,14 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
 				return CategoryFragment.newInstance();
 			case 1:
 				return HomeFragment.newInstance();
-			//case 2:
-				//return StoreListFragment.newInstance(infos);
+			case 2:
+				return StoreListFragment.newInstance();
 			}
 			return null;
 		}
 
 		@Override
-		public int getCount() { return 2; }
+		public int getCount() { return 3; }
 
 		@Override
 		public CharSequence getPageTitle(int position)
@@ -152,6 +151,8 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
 				return getString(R.string.title_section_category).toUpperCase(l);
 			case 1:
 				return getString(R.string.title_section_home).toUpperCase(l);
+			case 2:
+				return getString(R.string.title_section_list).toUpperCase(l);
 			}
 			return null;
 		}

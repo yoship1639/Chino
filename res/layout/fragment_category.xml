@@ -28,8 +28,8 @@
         android:layout_below="@+id/textView_userCount_title"
         android:layout_marginLeft="40dp"
         android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/icon_fasion_mono"
         android:text="ファッション"
-        android:drawableStart="@drawable/icon_fasion"
         android:textSize="24sp" />
 
     <CheckBox
@@ -39,7 +39,7 @@
         android:layout_alignLeft="@+id/checkBox_category_fasion"
         android:layout_below="@+id/checkBox_category_fasion"
         android:layout_marginTop="48dp"
-        android:drawableStart="@drawable/icon_restaurant"
+        android:drawableStart="@drawable/icon_restaurant_mono"
         android:text="レストラン"
         android:textSize="24sp" />
 
@@ -50,7 +50,7 @@
         android:layout_alignBaseline="@+id/checkBox_category_restaurant"
         android:layout_alignBottom="@+id/checkBox_category_restaurant"
         android:layout_alignLeft="@+id/checkBox_category_hobby"
-        android:drawableStart="@drawable/icon_grocery"
+        android:drawableStart="@drawable/icon_grocery_mono"
         android:text="食料品"
         android:textSize="24sp" />
 
@@ -61,7 +61,7 @@
         android:layout_alignLeft="@+id/checkBox_category_restaurant"
         android:layout_below="@+id/checkBox_category_restaurant"
         android:layout_marginTop="48dp"
-        android:drawableStart="@drawable/icon_daily_necessities"
+        android:drawableStart="@drawable/icon_daily_necessities_mono"
         android:text="日用雑貨"
         android:textSize="24sp" />
 
@@ -72,7 +72,7 @@
         android:layout_alignLeft="@+id/checkBox_category_dailyNecessities"
         android:layout_below="@+id/checkBox_category_interior"
         android:layout_marginTop="48dp"
-        android:drawableStart="@drawable/icon_service"
+        android:drawableStart="@drawable/icon_service_mono"
         android:text="サービス"
         android:textSize="24sp" />
 
@@ -83,7 +83,7 @@
         android:layout_alignBaseline="@+id/checkBox_category_fasion"
         android:layout_alignBottom="@+id/checkBox_category_fasion"
         android:layout_alignRight="@+id/textView_userCount_title"
-        android:drawableStart="@drawable/icon_hobby"
+        android:drawableStart="@drawable/icon_hobby_mono"
         android:text="ホビー"
         android:textSize="24sp" />
 
@@ -93,8 +93,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/checkBox_category_grocery"
         android:layout_alignTop="@+id/checkBox_category_dailyNecessities"
-        android:drawableStart="@drawable/icon_interior"
-        android:text="家具・インテリア"
+        android:drawableStart="@drawable/icon_interior_mono"
+        android:text="家具・\nインテリア"
         android:textSize="24sp" />
 
     <CheckBox
@@ -104,7 +104,7 @@
         android:layout_alignBaseline="@+id/checkBox_category_service"
         android:layout_alignBottom="@+id/checkBox_category_service"
         android:layout_alignLeft="@+id/checkBox_category_interior"
-        android:drawableStart="@drawable/icon_etc"
+        android:drawableStart="@drawable/icon_etc_mono"
         android:text="その他"
         android:textSize="24sp" />
 

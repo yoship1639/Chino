@@ -26,6 +26,8 @@ import android.widget.TextView;
  */
 public class ActiveCustomerCountFragment extends Fragment
 {
+	private static final int PERIOD_TIME = 5000;
+	
 	// 店の詳細情報
 	StoreDetail storeDetail;
 	
@@ -35,6 +37,8 @@ public class ActiveCustomerCountFragment extends Fragment
 	// 店舗にいるChinoユーザの人数を更新するためのタイマーとハンドラ
 	Timer timer;
 	Handler handler;
+	
+	Thread thread;
 
 	public static ActiveCustomerCountFragment newInstance(StoreDetail storeDetail)
 	{
@@ -63,36 +67,44 @@ public class ActiveCustomerCountFragment extends Fragment
 	public void onResume()
 	{
 		timer = new Timer();
-		// タイマー開始
 		
+		// タイマー開始
 		timer.schedule(new TimerTask()
 		{
 	        @Override
 	        public void run()
 	        {
-	            // mHandlerを通じてUI Threadへ処理をキューイング
-	            handler.post( new Runnable()
-	            {
-	                public void run()
-	                {
-	                	// サーバに店舗にいるChinoユーザの人数を問い合わせる
-	                	int count = 0;
-						try {
-							if(storeDetail != null)count = StoreDataConnector.getActiveCustomerCount(storeDetail.UUID);
-						} catch (ClientProtocolException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-	                	
-	                	textView_count.setText(count+"");
-	                }
-	            });
+	        	Thread thread = new Thread(new Runnable()
+	        	{
+					@Override
+					public void run() 
+					{
+						// mHandlerを通じてUI Threadへ処理をキューイング
+			            handler.post( new Runnable()
+			            {
+			                public void run()
+			                {
+			                	// サーバに店舗にいるChinoユーザの人数を問い合わせる
+			                	int count = 0;
+								try {
+									if (storeDetail != null) count = StoreDataConnector.getActiveCustomerCount(storeDetail.UUID);
+								} catch (ClientProtocolException e) {
+									e.printStackTrace();
+								} catch (IOException e) {
+									e.printStackTrace();
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
+			                	
+			                	textView_count.setText(count + "");
+			                }
+			            });
+					}
+				});
+	        	thread.start();
 	        }
-	    }, 1000, 1000);
-		
+	    }, 0, PERIOD_TIME);
+
 		super.onResume();
 	}
 	

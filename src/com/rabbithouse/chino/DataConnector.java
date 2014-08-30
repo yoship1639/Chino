@@ -45,14 +45,14 @@ public class DataConnector
         Editor editor = pref.edit();
         
         // 書き込み
-        editor.putBoolean("fasion", map.get("fasion"));
-        editor.putBoolean("hobby", map.get("hobby"));
-        editor.putBoolean("restaurant", map.get("restaurant"));
-        editor.putBoolean("grocery", map.get("grocery"));
-        editor.putBoolean("daily", map.get("daily"));
-        editor.putBoolean("interior", map.get("interior"));
-        editor.putBoolean("service", map.get("service"));
-        editor.putBoolean("etc", map.get("etc"));
+        editor.putBoolean("fasion", map.get("ファッション"));
+        editor.putBoolean("hobby", map.get("グッズ"));
+        editor.putBoolean("restaurant", map.get("飲食店"));
+        editor.putBoolean("grocery", map.get("食料品"));
+        editor.putBoolean("daily", map.get("日用雑貨"));
+        editor.putBoolean("interior", map.get("家具・インテリア"));
+        editor.putBoolean("service", map.get("サービス"));
+        editor.putBoolean("etc", map.get("その他"));
         
         editor.commit();
 	}
@@ -62,14 +62,14 @@ public class DataConnector
 		SharedPreferences pref = context.getSharedPreferences("iniData", Context.MODE_PRIVATE );
 		
 		HashMap<String, Boolean> map = new HashMap<String, Boolean>();
-		map.put("fasion", pref.getBoolean("fasion", false));
-		map.put("hobby", pref.getBoolean("hobby", false));
-		map.put("restaurant", pref.getBoolean("restaurant", false));
-		map.put("grocery", pref.getBoolean("grocery", false));
-		map.put("daily", pref.getBoolean("daily", false));
-		map.put("interior", pref.getBoolean("interior", false));
-		map.put("service", pref.getBoolean("service", false));
-		map.put("etc", pref.getBoolean("etc", false));
+		map.put("ファッション", pref.getBoolean("fasion", false));
+		map.put("グッズ", pref.getBoolean("hobby", false));
+		map.put("飲食店", pref.getBoolean("restaurant", false));
+		map.put("食料品", pref.getBoolean("grocery", false));
+		map.put("日用雑貨", pref.getBoolean("daily", false));
+		map.put("家具・インテリア", pref.getBoolean("interior", false));
+		map.put("サービス", pref.getBoolean("service", false));
+		map.put("その他", pref.getBoolean("etc", false));
 		
 		return map;
 	}
@@ -107,6 +107,43 @@ public class DataConnector
 		else if(name.equals("その他"))
 		{
 			return R.drawable.icon_etc;
+		}
+		return R.drawable.ic_launcher;
+	}
+	
+	public static int getCategoryMonoIcon(String name)
+	{
+		if(name.equals("ファッション"))
+		{
+			return R.drawable.icon_fasion_mono;
+		}
+		else if(name.equals("グッズ"))
+		{
+			return R.drawable.icon_hobby_mono;
+		}
+		else if(name.equals("飲食店"))
+		{
+			return R.drawable.icon_restaurant_mono;
+		}
+		else if(name.equals("食料品"))
+		{
+			return R.drawable.icon_grocery_mono;
+		}
+		else if(name.equals("日用雑貨"))
+		{
+			return R.drawable.icon_daily_necessities_mono;
+		}
+		else if(name.equals("家具・インテリア"))
+		{
+			return R.drawable.icon_interior_mono;
+		}
+		else if(name.equals("サービス"))
+		{
+			return R.drawable.icon_service_mono;
+		}
+		else if(name.equals("その他"))
+		{
+			return R.drawable.icon_etc_mono;
 		}
 		return R.drawable.ic_launcher;
 	}

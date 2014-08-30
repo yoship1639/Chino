@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.http.client.ClientProtocolException;
 
@@ -18,6 +19,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -28,11 +31,17 @@ import android.util.Log;
  */
 public class BeaconSearchService extends Service
 {
+	// ステータス通知用の信憑性の高い電波強度を得るためにとるデータの数
+	private static final int UUID_STATUS_AVERAGE_NUM = 5;
+	
+	// 店の情報を受け取る電波強度の閾値
+	private static final int UUID_STATUS_THRESHOLD_RSSI = -82;
+	
 	// 信憑性の高い電波強度を得るためにとるデータの数
-	private static final int UUID_AVERAGE_NUM = 8;
+	private static final int UUID_NEAR_AVERAGE_NUM = 8;
 	
 	// 店の近くにいると判断する電波強度の閾値
-	private static final int RSSI_ACCEPT_THRESHOLD = -70;
+	private static final int UUID_NEAR_THRESHOLD_RSSI = -75;
 
 	// iBeaconのUUIDを保持するリスト
 	private ArrayList<UuidData> _uuidList = new ArrayList<UuidData>();
@@ -48,7 +57,7 @@ public class BeaconSearchService extends Service
 	
 	
 	// ユーザ固有の番号
-	private int _userID;
+	private int _userID = 12345;
 	
 	public BeaconSearchService()
 	{
@@ -58,18 +67,19 @@ public class BeaconSearchService extends Service
 	public void onCreate()
 	{
 		// bluetoothを利用する準備
-		final BluetoothManager bluetoothManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
+		BluetoothManager bluetoothManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
 		_bluetoothAdapter = bluetoothManager.getAdapter();
-		_bluetoothAdapter.startLeScan(mLeScanCallback);
+		//_bluetoothAdapter.startLeScan(mLeScanCallback);
 		
 		// ステータス通知を利用する準備
 		_notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		
 		// Bluetoothの状態の変化を受け取るレシーバを登録
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 		_bluetoothBR = new BluetoothBroadcastReceiver(this);
-		registerReceiver(_bluetoothBR, intentFilter);
+		
+		//IntentFilter intentFilter = new IntentFilter();
+		//intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+		//registerReceiver(_bluetoothBR, intentFilter);
 		
 		// 固有のユーザIDを作成
 		/*
@@ -124,21 +134,106 @@ public class BeaconSearchService extends Service
 	 */
 	private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback()
 	{
+		int ret = 0;
 		/**
 		 * BluetoothLEの信号をキャッチしたとき
 		 */
 	    @Override
 	    public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord)
 	    {
-	    	//_bluetoothAdapter.stopLeScan(mLeScanCallback);
+	    	if(ret++ < 3) return;
+	    	ret = 0;
 	    	
-	    	Log.i("beacon", "何かきた RSSI:" + rssi);
+	    	//Log.i("beacon", "何かきた RSSI:" + rssi);
 	    	// UUIDを得る
 	    	String uuid = GetBeaconUuid(scanRecord);
 	    	if(uuid == null) return;
 	    	
 	    	UuidData uuidData = findUuid(uuid);
-	 
+	    	
+	    	// 初めて受け取るUUIDなら
+	    	if(uuidData == null)
+	    	{
+	    		Log.i("beacon", "初めてのUUIDだよ: " + uuid);
+	    		try
+	    		{
+	    			// ステータス通知用の店舗情報を受け取る
+	    			StoreInfo info = StoreDataConnector.getStoreInfo(uuid);
+	    		}
+	    		catch(Exception e)
+	    		{
+	    			e.printStackTrace();
+	    			return;
+	    		}
+	    		// リストに追加
+	    		uuidData = new UuidData(uuid);
+	    		_uuidList.add(uuidData);
+	    	}
+	    	
+	    	// RSSIを追加
+	    	uuidData.addRssi(rssi);
+	    	//Log.i("beacon", "RSSIの数: " + uuidData.getRssiNum());
+	    	
+	    	// まだステータス通知を送っていなくて店の情報を受け取るに値する電波強度のデータ数が取れたら
+	    	if(!uuidData.IsAlreadyNotify && uuidData.getRssiNum() >= UUID_STATUS_AVERAGE_NUM)
+	    	{
+	    		
+	    		// 平均値を得る
+		    	int aveRssi = uuidData.getRssi();
+		    	
+    			// 店の情報を受け取るに値する電波強度なら
+    			if(aveRssi >= UUID_STATUS_THRESHOLD_RSSI)
+    			{
+    				Log.i("beacon", "店の情報を受け取るに値する平均値でした：　" + aveRssi);
+    				
+    				StoreInfo info = null;
+		    		try
+		    		{
+		    			// ステータス通知用の店舗情報を受け取る
+		    			info = StoreDataConnector.getStoreInfo(uuid);
+		    		}
+		    		catch(Exception e)
+		    		{
+		    			e.printStackTrace();
+		    			return;
+		    		}
+		    		// データベースにお店情報を保存
+		    		StoreDataConnector.saveStoreInfo(getApplicationContext(), info);
+		    		
+		    		HashMap<String, Boolean> map = DataConnector.loadCategoryCheckList(getApplicationContext());
+		    		if(map.get(info.Category))
+		    		{
+		    			// 店舗情報をステータス通知に送る
+			    		NotifyStoreInfo(info);
+			    		uuidData.IsAlreadyNotify = true;
+		    		}
+		    		
+		    		uuidData.clearRssis();
+    			}
+	    	}
+	    	// すでにステータス通知を送っていて、店の近くにいるという情報を店に送るだけのデータ数があったら
+	    	else if(uuidData.IsAlreadyNotify && uuidData.getRssiNum() >= UUID_NEAR_AVERAGE_NUM)
+	    	{
+	    		// 平均値を得る
+		    	int aveRssi = uuidData.getRssi();
+		    	uuidData.clearRssis();
+		    	
+		    	// 平均値が閾値を超えるとき
+		    	if(aveRssi >= UUID_NEAR_THRESHOLD_RSSI)
+		    	{
+		    		Log.i("beacon", "店の近くにいると判断する平均値でした：　" + aveRssi);
+		    		
+		    		try {
+						StoreDataConnector.notifyNearStoreUser(uuidData.UUID, _userID);
+					} catch (ClientProtocolException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+		    	}
+	    	}
+	    	
+	    	/*
 	    	// すでに検知済みのUUIDならば
 	    	if(uuidData != null)
 	    	{
@@ -181,7 +276,7 @@ public class BeaconSearchService extends Service
 	    		StoreInfo info = null;
 	    		try
 	    		{
-	    			// 簡単な店舗情報を受け取る
+	    			// ステータス通知用の店舗情報を受け取る
 	    			info = StoreDataConnector.getStoreInfo(uuid);
 	    		}
 	    		catch(Exception e)
@@ -196,8 +291,7 @@ public class BeaconSearchService extends Service
 	    		// 店舗情報をステータス通知に送る
 	    		NotifyStoreInfo(info);
 	    	}
-	    	
-	    	//_bluetoothAdapter.startLeScan(mLeScanCallback);
+	    	*/
 	    }
 	};
 	
@@ -226,7 +320,8 @@ public class BeaconSearchService extends Service
 	class UuidData
 	{
 		public String UUID;
-		public int[] Rssis = new int[UUID_AVERAGE_NUM];
+		public int[] Rssis = new int[UUID_NEAR_AVERAGE_NUM];
+		public boolean IsAlreadyNotify = false;
 		
 		private int containsNum = 0;
 		
@@ -241,13 +336,13 @@ public class BeaconSearchService extends Service
 		 */
 		public void addRssi(int rssi)
 		{
-			if(containsNum >= UUID_AVERAGE_NUM )
+			if(containsNum >= UUID_NEAR_AVERAGE_NUM )
 			{
-				for(int i=0; i<UUID_AVERAGE_NUM - 1; i++)
+				for(int i=0; i<UUID_NEAR_AVERAGE_NUM - 1; i++)
 				{
 					Rssis[i] = Rssis[i+1];
 				}
-				Rssis[UUID_AVERAGE_NUM - 1] = rssi;
+				Rssis[UUID_NEAR_AVERAGE_NUM - 1] = rssi;
 			}
 			else
 			{
@@ -276,7 +371,7 @@ public class BeaconSearchService extends Service
 		 */
 		public void clearRssis()
 		{
-			for(int i=0; i<UUID_AVERAGE_NUM; i++)
+			for(int i=0; i<UUID_NEAR_AVERAGE_NUM; i++)
 			{
 				Rssis[i] = 0;
 			}
@@ -353,7 +448,8 @@ public class BeaconSearchService extends Service
 		builder.setContentTitle(info.Name);
 		builder.setContentText(info.SalesText);
 		builder.setTicker("[" + info.Category + "]お店の情報をキャッチしました!");
-		builder.setSmallIcon(DataConnector.getCategoryIcon(info.Category));
+		int icon = DataConnector.getCategoryIcon(info.Category);
+		builder.setSmallIcon(icon);
 		
 		Intent intent = new Intent();
 		intent.setClassName("com.rabbithouse.chino", "com.rabbithouse.chino.StoreDetailActivity");
@@ -370,6 +466,16 @@ public class BeaconSearchService extends Service
 	{
 		// TODO: bluetoothLEの受信を開始
 		Log.i("onStartCommand", "onStartCommandが呼ばれたよ!");
+		
+		// スキャン開始
+		if (_bluetoothAdapter != null) _bluetoothAdapter.startLeScan(mLeScanCallback);
+		
+		// ブロードキャストレシーバを登録
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+		
+		registerReceiver(_bluetoothBR, intentFilter);
+		
 		return super.onStartCommand(intent, flags, startId);
 	}
 	

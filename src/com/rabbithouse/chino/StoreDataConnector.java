@@ -186,8 +186,25 @@ public class StoreDataConnector
 		uri.append("/");
 		uri.append(userID);
 		
+		final String strUri = uri.toString();
+		
 		// HTTPリクエストを送る
-		sendHTTPRequest(uri.toString());
+		Thread thread = new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try {
+					sendHTTPRequest(strUri);
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		thread.start();
 	}
 	
 	/**
@@ -301,11 +318,12 @@ public class StoreDataConnector
 		values.put("sales", info.SalesText);
 		
 		// データが存在していない場合は挿入
-		if(c.getCount() != 0)
+		if(c.getCount() == 0)
 		{
 			db.insert("table_chino", null, values);
 		}
-		
+		db.close();
+		sql.close();
 	}
 	
 	/**
@@ -315,15 +333,18 @@ public class StoreDataConnector
 	 */
 	public static StoreInfo[] loadStoreInfos(Context context)
 	{
+		Log.i("load", "お店の情報を読み込みまぁす！");
+		
 		// SQLiteを使用する準備
 		MySQLiteOpenHelper sql = new MySQLiteOpenHelper(context);
 		SQLiteDatabase db = sql.getWritableDatabase();
 		
 		// すべてのデータを検索するクエリ
 		Cursor c = db.rawQuery("select * from table_chino;", null);
+		c.moveToFirst();
 		
 		// データを1件ずつ取り出す
-		StoreInfo[] infos = new StoreInfo[c.getCount()];	
+		StoreInfo[] infos = new StoreInfo[c.getCount()];
 		for(int i = 0; i < infos.length; i++)
 		{
 			int uuidIndex = c.getColumnIndex("uuid");
@@ -338,7 +359,11 @@ public class StoreDataConnector
 			info.SalesText = c.getString(salesIndex);
 			
 			infos[i] = info;
+			c.moveToNext();
 		}
+		
+		db.close();
+		sql.close();
 		
 		return infos;
 	}

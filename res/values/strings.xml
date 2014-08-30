@@ -12,6 +12,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_section_category">カテゴリ</string>
     <string name="title_section_home">ホーム</string>
+    <string name="title_section_list">お店一覧</string>   
     <string name="title_section_store_detail">お店の情報</string>
     <string name="title_section_store_count">Chinoユーザの人数</string>
     <string name="uri_find_store_info">07E6823C4CD98DF80A28DB3576182874335EC08A3E40C2D6BA1EB85541F49340</string>
@@ -23,5 +24,6 @@
     <string name="uri_notify_active_customer2">notifyActiveCustomer</string>
     <string name="uri_get_active_customer_count2">getActiveCustomerCount</string>
     <string name="title_activity_open_store_detail">OpenStoreDetailActivity</string>
-
+    
+    <string name="category_db_fasion">ファッション</string>
 </resources>

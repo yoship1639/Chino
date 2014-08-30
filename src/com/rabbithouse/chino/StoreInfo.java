@@ -26,4 +26,9 @@ public class StoreInfo implements Parcelable
 		dest.writeString(UUID);
 	}
 	
+	@Override
+	public String toString()
+	{
+		return Name;
+	}
 }
